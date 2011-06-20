@@ -113,14 +113,15 @@ public class SnowBallShapedRecipe {
                 lines.add(line);
         }
         if(cols==1) {
-            for(int col=0; col<3; col++) {
+            for(int col=0; col<lines.size(); col++) {
                 String lin = lines.get(col).trim();
                 lines.set(col, lin);
             }
         } else if(cols==2) {
             boolean trimmode = (biggestline.charAt(2) == ' ');
-            for(int col=0; col < 3; col++) {
+            for(int col=0; col < lines.size(); col++) {
                 String lin = lines.get(col);
+                // System.out.println(col+": "+lin);
                 if(trimmode) {
                     lin = lin.substring(0, 2);
                 } else {
@@ -132,7 +133,7 @@ public class SnowBallShapedRecipe {
         objects.addAll(lines);
         objects.addAll(inglines);
         /* for(String s : lines) {
-            System.out.println("line:"+s);
+            System.out.println("line:"+s.replace(' ', '.'));
         } */
         return objects.toArray();
     }

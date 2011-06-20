@@ -1,1 +1,11 @@
-This file was created by IntelliJ IDEA (Community Edition) IC-108.SNAPSHOT for binding GitHub repository
+README
+------
+
+This clientside version of snowballs is an addition to the SnowBalls Bukkit plugin. ( https://github.com/GuntherDW/SnowBalls )
+It queries the server on login to send the custom recipes enabled in SnowBalls, to add them clientside as well.
+
+This has a couple advantages. First, when you use auto-crafting, ie auto-64stack with 1 click, this will allow you
+to do so without having to continously clicking in the result window. It will also allow you to craft a lot faster
+if you want to quickly craft something.
+
+In short this bypasses the "lag" induced from server <-> client with custom recipes.

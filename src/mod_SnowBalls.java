@@ -30,19 +30,27 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
     }
 
     private void injectShapeLessRecipe(SnowBallRecipe sr) {
-        String s = "";
+        /* String s = "";
         for(iw ing : sr.getIngredients()) {
             s+=ing.l()+"*"+ing.a+",";
         }
         if(s.length()>0)
             s=s.substring(0, s.length()-1);
-        // System.out.println("Injecting recipe : "+s+" = "+ sr.getResult().a +"*"+ sr.getResult().l());
+        System.out.println("Injecting recipe : "+s+" = "+ sr.getResult().a +"*"+ sr.getResult().l()); */
         ModLoader.AddShapelessRecipe(sr.getResult(), sr.getIngredients().toArray());
     }
 
     private void injectShapedRecipe(SnowBallShapedRecipe shr) {
-        String s = "";
-        ModLoader.AddRecipe(shr.getResult(), shr.getIngredients());
+        /* String s = "";
+        for(iw ing : shr.getIngredients().values()) {
+            s+=ing.l()+"*"+ing.a+",";
+        }
+        if(s.length()>0)
+            s=s.substring(0, s.length()-1);
+        System.out.println("Injecting shaped recipe : "+s+" = "+ shr.getResult().a +"*"+ shr.getResult().l()); */
+        // this.a(new iw(gk.bb, 1), new Object[]{"###", "#X#", "###", Character.valueOf('#'), gk.aI, Character.valueOf('X'), gk.aO});
+        
+        ModLoader.AddRecipe(shr.getResult(), shr.generateRecipeLine());
     }
 
     @Override
@@ -51,7 +59,7 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
     }
 
     private boolean addRecipe(String result, String[] args, boolean inject) {
-        // System.out.println("SneuwSUI: " + type);
+        /* System.out.println("SneuwSUI: " + result); */
         inject = true;
         Integer Iid, Idmg, Iam;
         Integer tid, tdmg, tam;
@@ -59,12 +67,14 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
         iw ResultItemStack = null;
         iw tempstack = null;
         String[] res = result.split(":");
-        Boolean type = null;
+        Integer type = null;
         String  resu = "";
         try {
-            type = Boolean.parseBoolean(res[0]);
+            type = Integer.parseInt(res[0]);
             resu = res[1];
         } catch(ArrayIndexOutOfBoundsException ex) {
+            resu = result;
+        } catch(NumberFormatException ex) {
             resu = result;
         }
 
@@ -78,12 +88,12 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
             Idmg = Integer.parseInt(resultitem[1]);
             Iam = Integer.parseInt(resultitem[2]);
             ResultItemStack = new iw(Iid, Iam, Idmg);
-            System.out.println("Adding recipe for "+Iam+" "+ResultItemStack.l());
+            // System.out.println("Adding recipe for "+Iam+" "+ResultItemStack.l());
             /**
              * 0 or nothing (older format) : ShapeLess recipe
              * 1                           : Shaped    recipe
              */
-            if(type == null || type == false) {
+            if(type == null || type == 0) {
                 for(String a : args) {
                     String[] ra = a.split(";");
                     tid = Integer.parseInt(ra[0]);
@@ -101,7 +111,7 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
                 SnowBallShapedRecipe shr = new SnowBallShapedRecipe(ResultItemStack);
                 for(String a : args) {
 
-                    if(a!="") {
+                    if((!a.trim().equals(""))) {
                         String[] ra = a.split(";");
                         tid = Integer.parseInt(ra[0]);
                         tdmg = Integer.parseInt(ra[1]);
@@ -114,6 +124,8 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
                     pos++;
                 }
                 ShapedRecipes.add(shr);
+                if(inject)
+                    this.injectShapedRecipe(shr);
             }
         } catch(NumberFormatException ex) {
             System.out.println("NumberFormatException!");
@@ -131,16 +143,11 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
     @Override
     public boolean processChat(String chat) {
         Matcher matcher = commandpattern.matcher(chat);
-        // System.out.println("Sneuw: " + chat);
         if(matcher.find()) {
-            // System.out.println("\'" + matcher.group(1) + "\'  \'" + matcher.group(2) + "\'");
             if(matcher.group(1).equals("")) {
                 if(ModLoader.getMinecraftInstance().l()) {
-                    // System.out.println("Sending modloader snowballs...");
                     ModLoader.getMinecraftInstance().h.a("/snowballs client");
-                } else {
                 }
-
                 return true;
             } else {
                 return addRecipe(matcher.group(1), matcher.group(2).split("\\|"), true);

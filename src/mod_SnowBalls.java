@@ -63,9 +63,9 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
         inject = true;
         Integer Iid, Idmg, Iam;
         Integer tid, tdmg, tam;
-        List<iw> recipe = new ArrayList<iw>();
-        iw ResultItemStack = null;
-        iw tempstack = null;
+        List<iz> recipe = new ArrayList<iz>();
+        iz ResultItemStack = null;
+        iz tempstack = null;
         String[] res = result.split(":");
         Integer type = null;
         String  resu = "";
@@ -87,7 +87,7 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
             Iid = Integer.parseInt(resultitem[0]);
             Idmg = Integer.parseInt(resultitem[1]);
             Iam = Integer.parseInt(resultitem[2]);
-            ResultItemStack = new iw(Iid, Iam, Idmg);
+            ResultItemStack = new iz(Iid, Iam, Idmg);
             // System.out.println("Adding recipe for "+Iam+" "+ResultItemStack.l());
             /**
              * 0 or nothing (older format) : ShapeLess recipe
@@ -99,7 +99,7 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
                     tid = Integer.parseInt(ra[0]);
                     tdmg = Integer.parseInt(ra[1]);
                     tam = Integer.parseInt(ra[2]);
-                    tempstack = new iw(tid, tam, tdmg);
+                    tempstack = new iz(tid, tam, tdmg);
                     recipe.add(tempstack);
                 }
                 SnowBallRecipe sr = new SnowBallRecipe(ResultItemStack, recipe);
@@ -116,7 +116,7 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
                         tid = Integer.parseInt(ra[0]);
                         tdmg = Integer.parseInt(ra[1]);
                         tam = Integer.parseInt(ra[2]);
-                        tempstack = new iw(tid, tam, tdmg);
+                        tempstack = new iz(tid, tam, tdmg);
                         if(pos<9) {
                             shr.setIngredientSpot(pos, tempstack);
                         }

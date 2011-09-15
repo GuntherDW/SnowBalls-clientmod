@@ -5,31 +5,31 @@ import java.util.List;
  */
 public class SnowBallRecipe {
 
-    private List<iz> ingredients;
-    private iz result;
+    private List<ul> ingredients;
+    private ul result;
 
-    public SnowBallRecipe(iz result, List<iz> ingredients) {
+    public SnowBallRecipe(ul result, List<ul> ingredients) {
         this.ingredients = ingredients;
         this.result = result;
     }
 
-    public List<iz> getIngredients() {
+    public List<ul> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<iz> ingredients) {
+    public void setIngredients(List<ul> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public iz getResult() {
+    public ul getResult() {
         return result;
     }
 
-    public void setResult(iz result) {
+    public void setResult(ul result) {
         this.result = result;
     }
 
-    public void addIngredient(iz ingredient) {
+    public void addIngredient(ul ingredient) {
         if(ingredient!=null && ingredient.c > 0 && ingredient.c < 1024)
             this.ingredients.add(ingredient);
     }

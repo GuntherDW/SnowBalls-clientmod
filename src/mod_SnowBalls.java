@@ -37,10 +37,10 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
         if(itemId>1024 || itemId == null) return;
         if(DEBUG)
             ModLoader.getMinecraftInstance().v.a("§6"+itemId +" : "+maxstack);
-        gm item = null;
+        sv item = null;
         try{
-            item = (gm) gm.c[itemId];
-            if(item!=null) item.d(maxstack);
+            item = (sv) sv.f[itemId];
+            if(item!=null) item.e(maxstack);
             else { if(DEBUG) ModLoader.getMinecraftInstance().v.a("§6 WUZ NULL"); }
         } catch(ArrayIndexOutOfBoundsException ex) {
             return;
@@ -92,7 +92,7 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
             }
             if(maxStack==null) maxStack = 64;
             if(itemId!=null) this.setItemMaxStack(itemId, maxStack);
-            System.out.println(itemId+":"+maxStack);
+            // System.out.println(itemId+":"+maxStack);
         }
         return true;
     }
@@ -131,9 +131,9 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
         inject = true;
         Integer Iid, Idmg, Iam;
         Integer tid, tdmg, tam;
-        List<iz> recipe = new ArrayList<iz>();
-        iz ResultItemStack = null;
-        iz tempstack = null;
+        List<ul> recipe = new ArrayList<ul>();
+        ul ResultItemStack = null;
+        ul tempstack = null;
         String[] res = result.split(":");
         Integer type = null;
         String  resu = "";
@@ -155,7 +155,7 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
             Iid = Integer.parseInt(resultitem[0]);
             Idmg = Integer.parseInt(resultitem[1]);
             Iam = Integer.parseInt(resultitem[2]);
-            ResultItemStack = new iz(Iid, Iam, Idmg);
+            ResultItemStack = new ul(Iid, Iam, Idmg);
             // System.out.println("Adding recipe for "+Iam+" "+ResultItemStack.l());
             /**
              * 0 or nothing (older format) : ShapeLess recipe
@@ -167,7 +167,7 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
                     tid = Integer.parseInt(ra[0]);
                     tdmg = Integer.parseInt(ra[1]);
                     tam = Integer.parseInt(ra[2]);
-                    tempstack = new iz(tid, tam, tdmg);
+                    tempstack = new ul(tid, tam, tdmg);
                     recipe.add(tempstack);
                 }
                 SnowBallRecipe sr = new SnowBallRecipe(ResultItemStack, recipe);
@@ -184,7 +184,7 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
                         tid = Integer.parseInt(ra[0]);
                         tdmg = Integer.parseInt(ra[1]);
                         tam = Integer.parseInt(ra[2]);
-                        tempstack = new iz(tid, tam, tdmg);
+                        tempstack = new ul(tid, tam, tdmg);
                         if(pos<9) {
                             shr.setIngredientSpot(pos, tempstack);
                         }

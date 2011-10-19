@@ -47,7 +47,7 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
         }
     }
 
-    private void injectShapeLessRecipe(SnowBallRecipe sr) {
+    private void injectShapelessRecipe(SnowBallRecipe sr) {
         /* String s = "";
         for(iw ing : sr.getIngredients()) {
             s+=ing.l()+"*"+ing.a+",";
@@ -165,15 +165,15 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
                 for(String a : args) {
                     String[] ra = a.split(";");
                     tid = Integer.parseInt(ra[0]);
-                    tdmg = Integer.parseInt(ra[1]);
-                    tam = Integer.parseInt(ra[2]);
+                    tdmg = ra.length>1?Integer.parseInt(ra[1]):0;
+                    tam = ra.length>2?Integer.parseInt(ra[2]):1;
                     tempstack = new ul(tid, tam, tdmg);
                     recipe.add(tempstack);
                 }
                 SnowBallRecipe sr = new SnowBallRecipe(ResultItemStack, recipe);
                 ShapelessRecipes.add(sr);
                 if(inject)
-                    this.injectShapeLessRecipe(sr);
+                    this.injectShapelessRecipe(sr);
             } else {
                 int pos = 0;
                 SnowBallShapedRecipe shr = new SnowBallShapedRecipe(ResultItemStack);
@@ -182,8 +182,8 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
                     if((!a.trim().equals(""))) {
                         String[] ra = a.split(";");
                         tid = Integer.parseInt(ra[0]);
-                        tdmg = Integer.parseInt(ra[1]);
-                        tam = Integer.parseInt(ra[2]);
+                        tdmg = ra.length>1?Integer.parseInt(ra[1]):0;
+                        tam = ra.length>2?Integer.parseInt(ra[2]):1;
                         tempstack = new ul(tid, tam, tdmg);
                         if(pos<9) {
                             shr.setIngredientSpot(pos, tempstack);
@@ -214,7 +214,7 @@ public class mod_SnowBalls extends BaseMod implements ChatHookable {
         if(matcher.find()) {
             if(matcher.group(1).equals("")) {
                 if(ModLoader.getMinecraftInstance().l()) {
-                    ModLoader.getMinecraftInstance().h.a("/snowballs client");
+                    ModLoader.getMinecraftInstance().h.a("/snowballs client SUIv2");
                 }
                 return true;
             } else {

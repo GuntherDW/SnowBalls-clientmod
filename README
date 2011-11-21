@@ -9,3 +9,11 @@ to do so without having to continously clicking in the result window. It will al
 if you want to quickly craft something.
 
 In short this bypasses the "lag" induced from server <-> client with custom recipes.
+
+
+To install this mod (if you downloaded the snowballs-client jar), simply put the jar in your ~/.minecraft/mods/ folder.
+It doesn't modify any core minecraft files, so i decided that would be the best way to install it.
+I's easier to uninstall as well like that.
+
+Note: If you're not a plugin developer or don't want to take a look at the source code, just delete the src/ folder.
+It's not required to run or do anything.

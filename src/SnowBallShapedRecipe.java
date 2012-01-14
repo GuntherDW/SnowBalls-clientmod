@@ -9,53 +9,53 @@ import java.util.Map;
 public class SnowBallShapedRecipe {
 
     // private List<iz> ingredients;
-    private Map<Integer, dk> ingredients;
-    private dk result;
+    private Map<Integer, yq> ingredients;
+    private yq result;
 
-    public SnowBallShapedRecipe(dk result) {
+    public SnowBallShapedRecipe(yq result) {
         this.result = result;
-        this.ingredients = new HashMap<Integer, dk>();
+        this.ingredients = new HashMap<Integer, yq>();
     }
 
-    public SnowBallShapedRecipe(dk result, Map<Integer, dk> ingredients) {
+    public SnowBallShapedRecipe(yq result, Map<Integer, yq> ingredients) {
         this.result = result;
         this.ingredients = ingredients;
     }
 
-    public SnowBallShapedRecipe(dk result, List<dk> ing) {
+    public SnowBallShapedRecipe(yq result, List<yq> ing) {
         this.result = result;
-        this.ingredients = new HashMap<Integer, dk>();
-        for(int x=0; x<9; x++) {
-            if(ing.get(x)!=null) {
+        this.ingredients = new HashMap<Integer, yq>();
+        for (int x = 0; x < 9; x++) {
+            if (ing.get(x) != null) {
                 ingredients.put(x, ing.get(x));
             }
         }
     }
 
-    public dk getResult() {
+    public yq getResult() {
         return result;
     }
 
-    public void setResult(dk result) {
+    public void setResult(yq result) {
         this.result = result;
     }
 
-    public Map<Integer, dk> getIngredients() {
+    public Map<Integer, yq> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(Map<Integer, dk> ingredients) {
+    public void setIngredients(Map<Integer, yq> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public void setIngredientSpot(int spot, dk ingredient) {
-        if(spot>=0 && spot < 9) {
+    public void setIngredientSpot(int spot, yq ingredient) {
+        if (spot >= 0 && spot < 9) {
             this.ingredients.put(spot, ingredient);
         }
     }
 
-    public dk getIngredientSpot(int spot) {
-        if(this.ingredients.containsKey(spot)) {
+    public yq getIngredientSpot(int spot) {
+        if (this.ingredients.containsKey(spot)) {
             return this.ingredients.get(spot);
         } else {
             return null;
@@ -74,8 +74,8 @@ public class SnowBallShapedRecipe {
 
         int ingcount = 0;
 
-        for(dk ing : ingredients.values()) {
-            if(!ings.contains(ing.c)) {
+        for (yq ing : ingredients.values()) {
+            if (!ings.contains(ing.c)) {
                 ings.add(ing.c);
                 char c = 'A';
                 c += ingcount;
@@ -84,45 +84,44 @@ public class SnowBallShapedRecipe {
                 ingcount++;
             }
         }
-        for(int x=0; x<9; x+=3) {
+        for (int x = 0; x < 9; x += 3) {
             line = "";
-            for(int i=0; i<3; i++)
-            {
-                if(ingredients.containsKey(i+x)) {
-                    int itemID = ingredients.get(i+x).c;
+            for (int i = 0; i < 3; i++) {
+                if (ingredients.containsKey(i + x)) {
+                    int itemID = ingredients.get(i + x).c;
                     int pos = ings.indexOf(itemID);
                     char chara = 'A';
                     chara += pos;
-                    line+=chara;
+                    line += chara;
                     // System.out.println("char : "+chara+" voor itemID : "+itemID+"!");
                 } else {
-                    line+=' ';
+                    line += ' ';
                 }
             }
             int linelength = line.trim().length();
-            if(cols<linelength) {
-                cols=linelength;
+            if (cols < linelength) {
+                cols = linelength;
                 biggestline = line;
             }
             boolean add = true;
 
-            if(linelength == 0 && !(x==3))
-                add=false;
+            if (linelength == 0 && !(x == 3))
+                add = false;
 
-            if(add)
+            if (add)
                 lines.add(line);
         }
-        if(cols==1) {
-            for(int col=0; col<lines.size(); col++) {
+        if (cols == 1) {
+            for (int col = 0; col < lines.size(); col++) {
                 String lin = lines.get(col).trim();
                 lines.set(col, lin);
             }
-        } else if(cols==2) {
+        } else if (cols == 2) {
             boolean trimmode = (biggestline.charAt(2) == ' ');
-            for(int col=0; col < lines.size(); col++) {
+            for (int col = 0; col < lines.size(); col++) {
                 String lin = lines.get(col);
                 // System.out.println(col+": "+lin);
-                if(trimmode) {
+                if (trimmode) {
                     lin = lin.substring(0, 2);
                 } else {
                     lin = lin.substring(1, 2);

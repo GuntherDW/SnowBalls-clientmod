@@ -265,7 +265,6 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         for(String line : recipeLines) {
             Matcher matcher = lineSplitterPattern.matcher(line);
             if (matcher.find()) {
-                System.out.println("Adding "+matcher.group(1)+ " with line "+matcher.group(2));
                 parseLine(matcher.group(1), matcher.group(2).split("\\|"), true);
             }
         }

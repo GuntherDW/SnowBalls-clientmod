@@ -40,7 +40,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
 
     @Override
     public String getVersion() {
-        return "f1.0.0 SUIv2 GuntherDW, sk89q, lawhran";
+        return "v0.7 for f1.2.3 SUIv2 GuntherDW, sk89q, lawhran";
     }
 
     @Override
@@ -57,7 +57,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
     private void loadShapeLessRecipes() {
         if (!loadedrecipes) {
             for (SnowBallRecipe sr : ShapelessRecipes) {
-                ModLoader.AddShapelessRecipe(sr.getResult(), sr.getIngredients().toArray());
+                ModLoader.addShapelessRecipe(sr.getResult(), sr.getIngredients().toArray());
             }
         }
         loadedrecipes = true;
@@ -69,18 +69,18 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         if (DEBUG)
             log("§6" + itemId + " : " + maxstack);
         try {
-            ww.e[itemId].f(maxstack);
+            ym.e[itemId].f(maxstack);
         } catch (ArrayIndexOutOfBoundsException ex) {
             return;
         }
     }
 
     private void injectShapelessRecipe(SnowBallRecipe sr) {
-        ModLoader.AddShapelessRecipe(sr.getResult(), sr.getIngredients().toArray());
+        ModLoader.addShapelessRecipe(sr.getResult(), sr.getIngredients().toArray());
     }
 
     private void injectShapedRecipe(SnowBallShapedRecipe shr) {
-        ModLoader.AddRecipe(shr.getResult(), shr.generateRecipeLine());
+        ModLoader.addRecipe(shr.getResult(), shr.generateRecipeLine());
     }
 
     private boolean addItems(String[] items) {
@@ -136,9 +136,9 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         inject = true;
         Integer Iid, Idmg, Iam;
         Integer tid, tdmg, tam;
-        List<yq> recipe = new ArrayList<yq>();
-        yq ResultItemStack = null;
-        yq tempstack = null;
+        List<aai> recipe = new ArrayList<aai>();
+        aai ResultItemStack = null;
+        aai tempstack = null;
         String[] res = result.split(":");
         Integer type = null;
         String resu = "";
@@ -160,7 +160,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
             Iid = Integer.parseInt(resultitem[0]);
             Idmg = Integer.parseInt(resultitem[1]);
             Iam = Integer.parseInt(resultitem[2]);
-            ResultItemStack = new yq(Iid, Iam, Idmg);
+            ResultItemStack = new aai(Iid, Iam, Idmg);
             // System.out.println("Adding recipe for "+Iam+" "+ResultItemStack.l());
             /**
              * 0 or nothing (older format) : ShapeLess recipe
@@ -172,7 +172,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
                     tid = Integer.parseInt(ra[0]);
                     tdmg = ra.length > 1 ? Integer.parseInt(ra[1]) : 0;
                     tam = ra.length > 2 ? Integer.parseInt(ra[2]) : 1;
-                    tempstack = new yq(tid, tam, tdmg);
+                    tempstack = new aai(tid, tam, tdmg);
                     recipe.add(tempstack);
                 }
                 SnowBallRecipe sr = new SnowBallRecipe(ResultItemStack, recipe);
@@ -189,7 +189,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
                         tid = Integer.parseInt(ra[0]);
                         tdmg = ra.length > 1 ? Integer.parseInt(ra[1]) : 0;
                         tam = ra.length > 2 ? Integer.parseInt(ra[2]) : 1;
-                        tempstack = new yq(tid, tam, tdmg);
+                        tempstack = new aai(tid, tam, tdmg);
                         if (pos < 9) {
                             shr.setIngredientSpot(pos, tempstack);
                         }
@@ -250,7 +250,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         }
     } */
 
-    public void receivePacket(dz var1) {
+    public void receivePacket(eb var1) {
         Set<String> recipeLines = new HashSet<String>();
         String recipeLine = "";
         for (byte b1 : var1.c) {
@@ -270,12 +270,8 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         }
     }
 
-    public void sendPacket(dz dz) {
-        // We won't be needing this
-    }
-
-    public dz getRegisterPacket() {
-        dz registerPacket = new dz();
+    public eb getRegisterPacket() {
+        eb registerPacket = new eb();
         registerPacket.a = snowballsPluginMessageChannel;
         registerPacket.c = new byte[1];
         registerPacket.c[0] = (byte) 26;

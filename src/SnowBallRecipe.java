@@ -23,31 +23,31 @@ import java.util.List;
  */
 public class SnowBallRecipe {
 
-    private List<aai> ingredients;
-    private aai result;
+    private List<aan> ingredients;
+    private aan result;
 
-    public SnowBallRecipe(aai result, List<aai> ingredients) {
+    public SnowBallRecipe(aan result, List<aan> ingredients) {
         this.ingredients = ingredients;
         this.result = result;
     }
 
-    public List<aai> getIngredients() {
+    public List<aan> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<aai> ingredients) {
+    public void setIngredients(List<aan> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public aai getResult() {
+    public aan getResult() {
         return result;
     }
 
-    public void setResult(aai result) {
+    public void setResult(aan result) {
         this.result = result;
     }
 
-    public void addIngredient(aai ingredient) {
+    public void addIngredient(aan ingredient) {
         if (ingredient != null && ingredient.c > 0 && ingredient.c < 1024)
             this.ingredients.add(ingredient);
     }

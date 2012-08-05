@@ -17,14 +17,8 @@
  */
 
 import net.minecraft.client.Minecraft;
-import wecui.event.ChatEvent;
-import wecui.fevents.Listener;
-import wecui.fevents.Order;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,11 +30,14 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
     public List<SnowBallRecipe> ShapelessRecipes;
     public List<SnowBallShapedRecipe> ShapedRecipes;
     // public static Pattern commandpattern = Pattern.compile("§7§3§3§7([^|]*)\\|?(.*)");
+    private HashMap<Integer, Integer> originalStackSizes = new HashMap<Integer, Integer>();
     public static Pattern lineSplitterPattern = Pattern.compile("([^|]*)\\|?(.*)");
     private static Minecraft minecraft;
     private final String snowballsPluginMessageChannel = "SnowBalls";
     private boolean loadedrecipes = false;
     private boolean shownWarning = false;
+
+    @MLProp
     private boolean DEBUG = false;
 
     public mod_SnowBalls() {
@@ -58,7 +55,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
 
     @Override
     public String getVersion() {
-        return "v0.7 for f1.2.4 SUIv2 GuntherDW, sk89q, lawhran";
+        return "v0.7a for f1.3.1 SUIv2 GuntherDW, sk89q, lawhran";
     }
 
     @Override
@@ -68,8 +65,21 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
 
     private void log(String message) {
         System.out.println("[mod_SnowBalls] " + message);
-        if (minecraft != null && minecraft.w != null)
-            minecraft.w.a("[mod_SnowBalls] §6" + message);
+        if (minecraft != null && minecraft.v.b() != null)
+            minecraft.v.b().a("[mod_SnowBalls] §6" + message);
+    }
+
+    @Override
+    public void clientDisconnect(asu netHandler) {
+        System.out.println("serverDisconnect");
+        log("Resetting stacksizes for items!");
+        for (Map.Entry<Integer, Integer> entry : originalStackSizes.entrySet()) {
+            try {
+                rg.e[entry.getKey()].d(entry.getValue());
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                return;
+            }
+        }
     }
 
     private void loadShapeLessRecipes() {
@@ -87,7 +97,10 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         if (DEBUG)
             log("§6" + itemId + " : " + maxstack);
         try {
-            yr.e[itemId].f(maxstack);
+            if (!originalStackSizes.containsKey(itemId))
+                originalStackSizes.put(itemId, rg.e[itemId].j());
+
+            rg.e[itemId].d(maxstack);
         } catch (ArrayIndexOutOfBoundsException ex) {
             return;
         }
@@ -154,9 +167,9 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         inject = true;
         Integer Iid, Idmg, Iam;
         Integer tid, tdmg, tam;
-        List<aan> recipe = new ArrayList<aan>();
-        aan ResultItemStack = null;
-        aan tempstack = null;
+        List<ri> recipe = new ArrayList<ri>();
+        ri ResultItemStack = null;
+        ri tempstack = null;
         String[] res = result.split(":");
         Integer type = null;
         String resu = "";
@@ -178,7 +191,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
             Iid = Integer.parseInt(resultitem[0]);
             Idmg = Integer.parseInt(resultitem[1]);
             Iam = Integer.parseInt(resultitem[2]);
-            ResultItemStack = new aan(Iid, Iam, Idmg);
+            ResultItemStack = new ri(Iid, Iam, Idmg);
             // System.out.println("Adding recipe for "+Iam+" "+ResultItemStack.l());
             /**
              * 0 or nothing (older format) : ShapeLess recipe
@@ -190,7 +203,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
                     tid = Integer.parseInt(ra[0]);
                     tdmg = ra.length > 1 ? Integer.parseInt(ra[1]) : 0;
                     tam = ra.length > 2 ? Integer.parseInt(ra[2]) : 1;
-                    tempstack = new aan(tid, tam, tdmg);
+                    tempstack = new ri(tid, tam, tdmg);
                     recipe.add(tempstack);
                 }
                 SnowBallRecipe sr = new SnowBallRecipe(ResultItemStack, recipe);
@@ -207,7 +220,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
                         tid = Integer.parseInt(ra[0]);
                         tdmg = ra.length > 1 ? Integer.parseInt(ra[1]) : 0;
                         tam = ra.length > 2 ? Integer.parseInt(ra[2]) : 1;
-                        tempstack = new aan(tid, tam, tdmg);
+                        tempstack = new ri(tid, tam, tdmg);
                         if (pos < 9) {
                             shr.setIngredientSpot(pos, tempstack);
                         }
@@ -231,44 +244,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         return true;
     }
 
-    
-
-    /* public boolean processChat(String chat) {
-        Matcher matcher = commandpattern.matcher(chat);
-        if (matcher.find()) {
-            if (matcher.group(1).equals("")) {
-                if (ModLoader.getMinecraftInstance().l()) {
-                    ModLoader.getMinecraftInstance().h.a("/snowballs client SUIv2");
-                }
-                return true;
-            } else {
-                return parseLine(matcher.group(1), matcher.group(2).split("\\|"), true);
-            }
-        } else {
-            return false;
-        }
-    } */
-
-    /* private class mod_SnowBallsChatListener implements Listener<ChatEvent> {
-
-        public void onEvent(ChatEvent chatEvent) {
-            Matcher matcher = commandpattern.matcher(chatEvent.getMessage());
-            if (matcher.find()) {
-                if (matcher.group(1).equals("")) {
-                    if (ModLoader.getMinecraftInstance().l()) {
-                        ModLoader.getMinecraftInstance().h.a("/snowballs client SUIv2");
-                    }
-                    chatEvent.setCancelled(true);
-                    return;
-                } else {
-                    chatEvent.setCancelled(parseLine(matcher.group(1), matcher.group(2).split("\\|"), true));
-                    return;
-                }
-            }
-        }
-    } */
-
-    public void receivePacket(ee var1) {
+    public void receivePacket(ce var1) {
         Set<String> recipeLines = new HashSet<String>();
         String recipeLine = "";
         for (byte b1 : var1.c) {
@@ -279,8 +255,8 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
                 recipeLine += (char) b1;
             }
         }
-        
-        for(String line : recipeLines) {
+
+        for (String line : recipeLines) {
             Matcher matcher = lineSplitterPattern.matcher(line);
             if (matcher.find()) {
                 parseLine(matcher.group(1), matcher.group(2).split("\\|"), true);
@@ -288,8 +264,8 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         }
     }
 
-    public ee getRegisterPacket() {
-        ee registerPacket = new ee();
+    public ce getRegisterPacket() {
+        ce registerPacket = new ce();
         registerPacket.a = snowballsPluginMessageChannel;
         registerPacket.c = new byte[1];
         registerPacket.c[0] = (byte) 26;

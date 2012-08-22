@@ -55,7 +55,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
 
     @Override
     public String getVersion() {
-        return "v0.7a for f1.3.1 SUIv2 GuntherDW, sk89q, lawhran";
+        return "v0.7a for f1.3.2 SUIv2 GuntherDW, sk89q, lawhran";
     }
 
     @Override
@@ -70,7 +70,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
     }
 
     @Override
-    public void clientDisconnect(asu netHandler) {
+    public void clientDisconnect(asv netHandler) {
         System.out.println("serverDisconnect");
         log("Resetting stacksizes for items!");
         for (Map.Entry<Integer, Integer> entry : originalStackSizes.entrySet()) {
@@ -167,9 +167,9 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         inject = true;
         Integer Iid, Idmg, Iam;
         Integer tid, tdmg, tam;
-        List<ri> recipe = new ArrayList<ri>();
-        ri ResultItemStack = null;
-        ri tempstack = null;
+        List<rj> recipe = new ArrayList<rj>();
+        rj ResultItemStack = null;
+        rj tempstack = null;
         String[] res = result.split(":");
         Integer type = null;
         String resu = "";
@@ -191,7 +191,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
             Iid = Integer.parseInt(resultitem[0]);
             Idmg = Integer.parseInt(resultitem[1]);
             Iam = Integer.parseInt(resultitem[2]);
-            ResultItemStack = new ri(Iid, Iam, Idmg);
+            ResultItemStack = new rj(Iid, Iam, Idmg);
             // System.out.println("Adding recipe for "+Iam+" "+ResultItemStack.l());
             /**
              * 0 or nothing (older format) : ShapeLess recipe
@@ -203,7 +203,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
                     tid = Integer.parseInt(ra[0]);
                     tdmg = ra.length > 1 ? Integer.parseInt(ra[1]) : 0;
                     tam = ra.length > 2 ? Integer.parseInt(ra[2]) : 1;
-                    tempstack = new ri(tid, tam, tdmg);
+                    tempstack = new rj(tid, tam, tdmg);
                     recipe.add(tempstack);
                 }
                 SnowBallRecipe sr = new SnowBallRecipe(ResultItemStack, recipe);
@@ -220,7 +220,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
                         tid = Integer.parseInt(ra[0]);
                         tdmg = ra.length > 1 ? Integer.parseInt(ra[1]) : 0;
                         tam = ra.length > 2 ? Integer.parseInt(ra[2]) : 1;
-                        tempstack = new ri(tid, tam, tdmg);
+                        tempstack = new rj(tid, tam, tdmg);
                         if (pos < 9) {
                             shr.setIngredientSpot(pos, tempstack);
                         }

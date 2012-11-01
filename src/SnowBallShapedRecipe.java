@@ -27,22 +27,22 @@ import java.util.Map;
 public class SnowBallShapedRecipe {
 
     // private List<iz> ingredients;
-    private Map<Integer, rj> ingredients;
-    private rj result;
+    private Map<Integer, tv> ingredients;
+    private tv result;
 
-    public SnowBallShapedRecipe(rj result) {
+    public SnowBallShapedRecipe(tv result) {
         this.result = result;
-        this.ingredients = new HashMap<Integer, rj>();
+        this.ingredients = new HashMap<Integer, tv>();
     }
 
-    public SnowBallShapedRecipe(rj result, Map<Integer, rj> ingredients) {
+    public SnowBallShapedRecipe(tv result, Map<Integer, tv> ingredients) {
         this.result = result;
         this.ingredients = ingredients;
     }
 
-    public SnowBallShapedRecipe(rj result, List<rj> ing) {
+    public SnowBallShapedRecipe(tv result, List<tv> ing) {
         this.result = result;
-        this.ingredients = new HashMap<Integer, rj>();
+        this.ingredients = new HashMap<Integer, tv>();
         for (int x = 0; x < 9; x++) {
             if (ing.get(x) != null) {
                 ingredients.put(x, ing.get(x));
@@ -50,29 +50,29 @@ public class SnowBallShapedRecipe {
         }
     }
 
-    public rj getResult() {
+    public tv getResult() {
         return result;
     }
 
-    public void setResult(rj result) {
+    public void setResult(tv result) {
         this.result = result;
     }
 
-    public Map<Integer, rj> getIngredients() {
+    public Map<Integer, tv> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(Map<Integer, rj> ingredients) {
+    public void setIngredients(Map<Integer, tv> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public void setIngredientSpot(int spot, rj ingredient) {
+    public void setIngredientSpot(int spot, tv ingredient) {
         if (spot >= 0 && spot < 9) {
             this.ingredients.put(spot, ingredient);
         }
     }
 
-    public rj getIngredientSpot(int spot) {
+    public tv getIngredientSpot(int spot) {
         if (this.ingredients.containsKey(spot)) {
             return this.ingredients.get(spot);
         } else {
@@ -92,7 +92,7 @@ public class SnowBallShapedRecipe {
 
         int ingcount = 0;
 
-        for (rj ing : ingredients.values()) {
+        for (tv ing : ingredients.values()) {
             if (!ings.contains(ing.c)) {
                 ings.add(ing.c);
                 char c = 'A';

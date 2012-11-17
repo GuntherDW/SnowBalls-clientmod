@@ -23,31 +23,31 @@ import java.util.List;
  */
 public class SnowBallRecipe {
 
-    private List<tv> ingredients;
-    private tv result;
+    private List<um> ingredients;
+    private um result;
 
-    public SnowBallRecipe(tv result, List<tv> ingredients) {
+    public SnowBallRecipe(um result, List<um> ingredients) {
         this.ingredients = ingredients;
         this.result = result;
     }
 
-    public List<tv> getIngredients() {
+    public List<um> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<tv> ingredients) {
+    public void setIngredients(List<um> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public tv getResult() {
+    public um getResult() {
         return result;
     }
 
-    public void setResult(tv result) {
+    public void setResult(um result) {
         this.result = result;
     }
 
-    public void addIngredient(tv ingredient) {
+    public void addIngredient(um ingredient) {
         if (ingredient != null && ingredient.c > 0 && ingredient.c < 1024)
             this.ingredients.add(ingredient);
     }

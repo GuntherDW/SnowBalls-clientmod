@@ -70,12 +70,12 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
     }
 
     @Override
-    public void clientDisconnect(awr netHandler) {
+    public void clientDisconnect(axz netHandler) {
         // System.out.println("serverDisconnect");
         log("Resetting stacksizes for items!");
         for (Map.Entry<Integer, Integer> entry : originalStackSizes.entrySet()) {
             try {
-                ts.e[entry.getKey()].d(entry.getValue());
+                uk.e[entry.getKey()].d(entry.getValue());
             } catch (ArrayIndexOutOfBoundsException ex) {
                 return;
             }
@@ -98,9 +98,9 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
             log("§6" + itemId + " : " + maxstack);
         try {
             if (!originalStackSizes.containsKey(itemId))
-                originalStackSizes.put(itemId, ts.e[itemId].m());
+                originalStackSizes.put(itemId, uk.e[itemId].m());
 
-            ts.e[itemId].d(maxstack);
+            uk.e[itemId].d(maxstack);
         } catch (ArrayIndexOutOfBoundsException ex) {
             return;
         }
@@ -167,9 +167,9 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         inject = true;
         Integer Iid, Idmg, Iam;
         Integer tid, tdmg, tam;
-        List<tv> recipe = new ArrayList<tv>();
-        tv ResultItemStack = null;
-        tv tempstack = null;
+        List<um> recipe = new ArrayList<um>();
+        um ResultItemStack = null;
+        um tempstack = null;
         String[] res = result.split(":");
         Integer type = null;
         String resu = "";
@@ -191,7 +191,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
             Iid = Integer.parseInt(resultitem[0]);
             Idmg = Integer.parseInt(resultitem[1]);
             Iam = Integer.parseInt(resultitem[2]);
-            ResultItemStack = new tv(Iid, Iam, Idmg);
+            ResultItemStack = new um(Iid, Iam, Idmg);
             // System.out.println("Adding recipe for "+Iam+" "+ResultItemStack.l());
             /**
              * 0 or nothing (older format) : ShapeLess recipe
@@ -203,13 +203,13 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
                     tid = Integer.parseInt(ra[0]);
                     tdmg = ra.length > 1 ? Integer.parseInt(ra[1]) : 0;
                     tam = ra.length > 2 ? Integer.parseInt(ra[2]) : 1;
-                    tempstack = new tv(tid, tam, tdmg);
+                    tempstack = new um(tid, tam, tdmg);
                     recipe.add(tempstack);
                 }
-                SnowBallRecipe tv = new SnowBallRecipe(ResultItemStack, recipe);
-                ShapelessRecipes.add(tv);
+                SnowBallRecipe um = new SnowBallRecipe(ResultItemStack, recipe);
+                ShapelessRecipes.add(um);
                 if (inject)
-                    this.injectShapelessRecipe(tv);
+                    this.injectShapelessRecipe(um);
             } else {
                 int pos = 0;
                 SnowBallShapedRecipe shr = new SnowBallShapedRecipe(ResultItemStack);
@@ -220,7 +220,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
                         tid = Integer.parseInt(ra[0]);
                         tdmg = ra.length > 1 ? Integer.parseInt(ra[1]) : 0;
                         tam = ra.length > 2 ? Integer.parseInt(ra[2]) : 1;
-                        tempstack = new tv(tid, tam, tdmg);
+                        tempstack = new um(tid, tam, tdmg);
                         if (pos < 9) {
                             shr.setIngredientSpot(pos, tempstack);
                         }
@@ -244,7 +244,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         return true;
     }
 
-    public void receivePacket(da var1) {
+    public void receivePacket(dj var1) {
         Set<String> recipeLines = new HashSet<String>();
         String recipeLine = "";
         for (byte b1 : var1.c) {
@@ -264,8 +264,8 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         }
     }
 
-    public da getRegisterPacket() {
-        da registerPacket = new da();
+    public dj getRegisterPacket() {
+        dj registerPacket = new dj();
         registerPacket.a = snowballsPluginMessageChannel;
         registerPacket.c = new byte[1];
         registerPacket.c[0] = (byte) 26;

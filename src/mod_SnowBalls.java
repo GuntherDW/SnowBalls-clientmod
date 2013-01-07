@@ -55,7 +55,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
 
     @Override
     public String getVersion() {
-        return "v0.7a for f1.4.2 SUIv2 GuntherDW, sk89q, lawhran";
+        return "v0.8a for f1.4.6 SUIv2 GuntherDW, sk89q, lawhran";
     }
 
     @Override
@@ -70,7 +70,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
     }
 
     @Override
-    public void clientDisconnect(axz netHandler) {
+    public void clientDisconnect(ayh netHandler) {
         // System.out.println("serverDisconnect");
         log("Resetting stacksizes for items!");
         for (Map.Entry<Integer, Integer> entry : originalStackSizes.entrySet()) {
@@ -167,9 +167,9 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         inject = true;
         Integer Iid, Idmg, Iam;
         Integer tid, tdmg, tam;
-        List<um> recipe = new ArrayList<um>();
-        um ResultItemStack = null;
-        um tempstack = null;
+        List<ur> recipe = new ArrayList<ur>();
+        ur ResultItemStack = null;
+        ur tempstack = null;
         String[] res = result.split(":");
         Integer type = null;
         String resu = "";
@@ -191,7 +191,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
             Iid = Integer.parseInt(resultitem[0]);
             Idmg = Integer.parseInt(resultitem[1]);
             Iam = Integer.parseInt(resultitem[2]);
-            ResultItemStack = new um(Iid, Iam, Idmg);
+            ResultItemStack = new ur(Iid, Iam, Idmg);
             // System.out.println("Adding recipe for "+Iam+" "+ResultItemStack.l());
             /**
              * 0 or nothing (older format) : ShapeLess recipe
@@ -203,13 +203,13 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
                     tid = Integer.parseInt(ra[0]);
                     tdmg = ra.length > 1 ? Integer.parseInt(ra[1]) : 0;
                     tam = ra.length > 2 ? Integer.parseInt(ra[2]) : 1;
-                    tempstack = new um(tid, tam, tdmg);
+                    tempstack = new ur(tid, tam, tdmg);
                     recipe.add(tempstack);
                 }
-                SnowBallRecipe um = new SnowBallRecipe(ResultItemStack, recipe);
-                ShapelessRecipes.add(um);
+                SnowBallRecipe shapelessRecipe = new SnowBallRecipe(ResultItemStack, recipe);
+                ShapelessRecipes.add(shapelessRecipe);
                 if (inject)
-                    this.injectShapelessRecipe(um);
+                    this.injectShapelessRecipe(shapelessRecipe);
             } else {
                 int pos = 0;
                 SnowBallShapedRecipe shr = new SnowBallShapedRecipe(ResultItemStack);
@@ -220,7 +220,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
                         tid = Integer.parseInt(ra[0]);
                         tdmg = ra.length > 1 ? Integer.parseInt(ra[1]) : 0;
                         tam = ra.length > 2 ? Integer.parseInt(ra[2]) : 1;
-                        tempstack = new um(tid, tam, tdmg);
+                        tempstack = new ur(tid, tam, tdmg);
                         if (pos < 9) {
                             shr.setIngredientSpot(pos, tempstack);
                         }
@@ -244,7 +244,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         return true;
     }
 
-    public void receivePacket(dj var1) {
+    public void receivePacket(di var1) {
         Set<String> recipeLines = new HashSet<String>();
         String recipeLine = "";
         for (byte b1 : var1.c) {
@@ -264,8 +264,8 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         }
     }
 
-    public dj getRegisterPacket() {
-        dj registerPacket = new dj();
+    public di getRegisterPacket() {
+        di registerPacket = new di();
         registerPacket.a = snowballsPluginMessageChannel;
         registerPacket.c = new byte[1];
         registerPacket.c[0] = (byte) 26;

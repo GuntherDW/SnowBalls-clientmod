@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 GuntherDW
+ * Copyright (c) 2012-2015 GuntherDW
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,9 +15,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+package be.guntherdw.minecraft.snowballsclient;
 
+import com.google.common.collect.ImmutableList;
+import com.mojang.realmsclient.dto.RealmsServer;
+import com.mumfrey.liteloader.JoinGameListener;
+import com.mumfrey.liteloader.PluginChannelListener;
+import com.mumfrey.liteloader.Tickable;
+import com.mumfrey.liteloader.core.LiteLoader;
+import com.mumfrey.liteloader.util.log.LiteLoaderLogger;
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.network.INetHandler;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.client.C17PacketCustomPayload;
+import net.minecraft.network.play.server.S01PacketJoinGame;
+import org.apache.logging.log4j.core.Logger;
 
+import java.io.File;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,7 +44,7 @@ import java.util.regex.Pattern;
 /**
  * @author GuntherDW
  */
-public class mod_SnowBalls extends BaseMod implements dzHookable /*implements ChatHookable*/ {
+public class LiteModSnowBalls implements JoinGameListener, PluginChannelListener, Tickable {
 
     public List<SnowBallRecipe> ShapelessRecipes;
     public List<SnowBallShapedRecipe> ShapedRecipes;
@@ -37,55 +56,58 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
     private boolean loadedrecipes = false;
     private boolean shownWarning = false;
 
-    @MLProp
+    private final static int DELAYED_HELO_TICKS = 10;
+    private int delayedHelo = 0;
+    private boolean sendRegisterPacket = false;
+
+    Logger log = LiteLoaderLogger.getLogger();
+
     private boolean DEBUG = false;
 
-    public mod_SnowBalls() {
+    public LiteModSnowBalls() {
         ShapelessRecipes = new ArrayList<SnowBallRecipe>();
         ShapedRecipes = new ArrayList<SnowBallShapedRecipe>();
-        minecraft = ModLoader.getMinecraftInstance();
-        dzHooksManager.registerHook(this, snowballsPluginMessageChannel);
-
-        // ChatEvent.handlers.register(new mod_SnowBallsChatListener(), Order.Default);
-
-        // ChatHook.addHook(this);
-        // ModLoader.SetInGameHook(this, true, false);
-        // this.setItemMaxStack(67, 64); // sign
+        minecraft = Minecraft.getMinecraft();
     }
 
     @Override
     public String getVersion() {
-        return "v0.8a for f1.4.6 SUIv2 GuntherDW, sk89q, lawhran";
+        return "v0.9";
     }
 
+    /**
+     * Do startup stuff here, minecraft is not fully initialised when this function is called so mods *must not*
+     * interact with minecraft in any way here
+     *
+     * @param configPath Configuration path to use
+     */
     @Override
-    public void load() {
+    public void init(File configPath) {
+
+    }
+
+    /**
+     * Called when the loader detects that a version change has happened since this mod was last loaded
+     *
+     * @param version       new version
+     * @param configPath    Path for the new version-specific config
+     * @param oldConfigPath Path for the old version-specific config
+     */
+    @Override
+    public void upgradeSettings(String version, File configPath, File oldConfigPath) {
 
     }
 
     private void log(String message) {
-        System.out.println("[mod_SnowBalls] " + message);
-        if (minecraft != null && minecraft.v.b() != null)
-            minecraft.v.b().a("[mod_SnowBalls] §6" + message);
-    }
-
-    @Override
-    public void clientDisconnect(ayh netHandler) {
-        // System.out.println("serverDisconnect");
-        log("Resetting stacksizes for items!");
-        for (Map.Entry<Integer, Integer> entry : originalStackSizes.entrySet()) {
-            try {
-                uk.e[entry.getKey()].d(entry.getValue());
-            } catch (ArrayIndexOutOfBoundsException ex) {
-                return;
-            }
-        }
+        log.info("[mod_SnowBalls] " + message);
+        if (minecraft != null && minecraft.ingameGUI.getChatGUI() != null)
+            minecraft.ingameGUI.getChatGUI().addToSentMessages("[mod_SnowBalls] §6" + message);
     }
 
     private void loadShapeLessRecipes() {
         if (!loadedrecipes) {
             for (SnowBallRecipe sr : ShapelessRecipes) {
-                ModLoader.addShapelessRecipe(sr.getResult(), sr.getIngredients().toArray());
+                CraftingManager.getInstance().addShapelessRecipe(sr.getResult(), sr.getIngredients().toArray());
             }
         }
         loadedrecipes = true;
@@ -93,25 +115,25 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
 
     private void setItemMaxStack(Integer itemId, int maxstack) {
         if (maxstack < 0) maxstack = 1;
-        if (itemId > 1024 || itemId == null) return;
+        if (itemId < 1 || itemId > 4096) return;
         if (DEBUG)
             log("§6" + itemId + " : " + maxstack);
         try {
             if (!originalStackSizes.containsKey(itemId))
-                originalStackSizes.put(itemId, uk.e[itemId].m());
+                originalStackSizes.put(itemId, Item.getItemById(itemId).getItemStackLimit());
 
-            uk.e[itemId].d(maxstack);
+            Item.getItemById(itemId).setMaxStackSize(maxstack);
         } catch (ArrayIndexOutOfBoundsException ex) {
             return;
         }
     }
 
     private void injectShapelessRecipe(SnowBallRecipe sr) {
-        ModLoader.addShapelessRecipe(sr.getResult(), sr.getIngredients().toArray());
+        CraftingManager.getInstance().addShapelessRecipe(sr.getResult(), sr.getIngredients().toArray());
     }
 
     private void injectShapedRecipe(SnowBallShapedRecipe shr) {
-        ModLoader.addRecipe(shr.getResult(), shr.generateRecipeLine());
+        CraftingManager.getInstance().addRecipe(shr.getResult(), shr.generateRecipeLine());
     }
 
     private boolean addItems(String[] items) {
@@ -167,9 +189,9 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         inject = true;
         Integer Iid, Idmg, Iam;
         Integer tid, tdmg, tam;
-        List<ur> recipe = new ArrayList<ur>();
-        ur ResultItemStack = null;
-        ur tempstack = null;
+        List<ItemStack> recipe = new ArrayList<ItemStack>();
+        ItemStack ResultItemStack = null;
+        ItemStack tempstack = null;
         String[] res = result.split(":");
         Integer type = null;
         String resu = "";
@@ -191,7 +213,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
             Iid = Integer.parseInt(resultitem[0]);
             Idmg = Integer.parseInt(resultitem[1]);
             Iam = Integer.parseInt(resultitem[2]);
-            ResultItemStack = new ur(Iid, Iam, Idmg);
+            ResultItemStack = new ItemStack(Item.getItemById(Iid), Iam, Idmg);
             // System.out.println("Adding recipe for "+Iam+" "+ResultItemStack.l());
             /**
              * 0 or nothing (older format) : ShapeLess recipe
@@ -203,7 +225,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
                     tid = Integer.parseInt(ra[0]);
                     tdmg = ra.length > 1 ? Integer.parseInt(ra[1]) : 0;
                     tam = ra.length > 2 ? Integer.parseInt(ra[2]) : 1;
-                    tempstack = new ur(tid, tam, tdmg);
+                    tempstack = new ItemStack(Item.getItemById(tid), tam, tdmg);
                     recipe.add(tempstack);
                 }
                 SnowBallRecipe shapelessRecipe = new SnowBallRecipe(ResultItemStack, recipe);
@@ -220,7 +242,7 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
                         tid = Integer.parseInt(ra[0]);
                         tdmg = ra.length > 1 ? Integer.parseInt(ra[1]) : 0;
                         tam = ra.length > 2 ? Integer.parseInt(ra[2]) : 1;
-                        tempstack = new ur(tid, tam, tdmg);
+                        tempstack = new ItemStack(Item.getItemById(tid), tam, tdmg);
                         if (pos < 9) {
                             shr.setIngredientSpot(pos, tempstack);
                         }
@@ -232,11 +254,11 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
                     this.injectShapedRecipe(shr);
             }
         } catch (NumberFormatException ex) {
-            System.out.println("NumberFormatException!");
+            log.warn("NumberFormatException!");
             ex.printStackTrace();
             return false;
         } catch (ArrayIndexOutOfBoundsException ex) {
-            System.out.println("ArrayIndexOutOfBoundsException!");
+            log.warn("ArrayIndexOutOfBoundsException!");
             ex.printStackTrace();
             return false;
         }
@@ -244,10 +266,19 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         return true;
     }
 
-    public void receivePacket(di var1) {
+    /**
+     * Called when a custom payload packet arrives on a channel this mod has registered
+     *
+     * @param channel Channel on which the custom payload was received
+     * @param data    Custom payload data
+     */
+    @Override
+    public void onCustomPayload(String channel, PacketBuffer data) {
+        log("Got custom payload packet!");
         Set<String> recipeLines = new HashSet<String>();
         String recipeLine = "";
-        for (byte b1 : var1.c) {
+        byte[] bytes = data.array();
+        for (byte b1 : bytes) {
             if (b1 == (byte) 0) {
                 recipeLines.add(recipeLine);
                 recipeLine = "";
@@ -264,12 +295,74 @@ public class mod_SnowBalls extends BaseMod implements dzHookable /*implements Ch
         }
     }
 
-    public di getRegisterPacket() {
-        di registerPacket = new di();
-        registerPacket.a = snowballsPluginMessageChannel;
-        registerPacket.c = new byte[1];
-        registerPacket.c[0] = (byte) 26;
-        registerPacket.b = 1;
+    public C17PacketCustomPayload getRegisterPacket() {
+        PacketBuffer pb = new PacketBuffer(Unpooled.buffer());
+        pb.writeByte((byte) 26);
+        C17PacketCustomPayload registerPacket = new C17PacketCustomPayload(snowballsPluginMessageChannel, pb);
         return registerPacket;
+    }
+
+    /**
+     * Called on join game
+     *
+     * @param netHandler     Net handler
+     * @param joinGamePacket Join game packet
+     * @param serverData     ServerData object representing the server being connected to
+     * @param realmsServer   If connecting to a realm, a reference to the RealmsServer object
+     */
+    @Override
+    public void onJoinGame(INetHandler netHandler, S01PacketJoinGame joinGamePacket, ServerData serverData, RealmsServer realmsServer) {
+        sendRegisterPacket = true;
+        delayedHelo = DELAYED_HELO_TICKS;
+    }
+
+    /**
+     * Get the display name
+     *
+     * @return display name
+     */
+    @Override
+    public String getName() {
+        return "SnowBalls";
+    }
+
+
+
+    /**
+     * Return a list of the plugin channels the mod wants to register
+     *
+     * @return plugin channel names as a list, it is recommended to use {@link ImmutableList#of} for this purpose
+     */
+    @Override
+    public List<String> getChannels() {
+        return Arrays.asList(new String[] { snowballsPluginMessageChannel });
+    }
+
+    private boolean shouldTick() {
+        return LiteLoader.getClientPluginChannels().isRemoteChannelRegistered(snowballsPluginMessageChannel);
+    }
+
+    /**
+     * Called every frame
+     *
+     * @param minecraft    Minecraft instance
+     * @param partialTicks Partial tick value
+     * @param inGame       True if in-game, false if in the menu
+     * @param clock        True if this is a new tick, otherwise false if it's a regular frame
+     */
+    @Override
+    public void onTick(Minecraft minecraft, float partialTicks, boolean inGame, boolean clock) {
+        if(!inGame) return;
+        if (!shouldTick()) return;
+
+        if (sendRegisterPacket) {
+            if (delayedHelo == 0) {
+                log("Sending helo packet");
+                minecraft.getNetHandler().addToSendQueue(getRegisterPacket());
+                sendRegisterPacket = false;
+            } else {
+                delayedHelo--;
+            }
+        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 GuntherDW
+ * Copyright (c) 2012-2015 GuntherDW
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+package be.guntherdw.minecraft.snowballsclient;
+
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,23 +31,22 @@ import java.util.Map;
  */
 public class SnowBallShapedRecipe {
 
-    // private List<iz> ingredients;
-    private Map<Integer, ur> ingredients;
-    private ur result;
+    private Map<Integer, ItemStack> ingredients;
+    private ItemStack result;
 
-    public SnowBallShapedRecipe(ur result) {
+    public SnowBallShapedRecipe(ItemStack result) {
         this.result = result;
-        this.ingredients = new HashMap<Integer, ur>();
+        this.ingredients = new HashMap<Integer, ItemStack>();
     }
 
-    public SnowBallShapedRecipe(ur result, Map<Integer, ur> ingredients) {
+    public SnowBallShapedRecipe(ItemStack result, Map<Integer, ItemStack> ingredients) {
         this.result = result;
         this.ingredients = ingredients;
     }
 
-    public SnowBallShapedRecipe(ur result, List<ur> ing) {
+    public SnowBallShapedRecipe(ItemStack result, List<ItemStack> ing) {
         this.result = result;
-        this.ingredients = new HashMap<Integer, ur>();
+        this.ingredients = new HashMap<Integer, ItemStack>();
         for (int x = 0; x < 9; x++) {
             if (ing.get(x) != null) {
                 ingredients.put(x, ing.get(x));
@@ -50,29 +54,29 @@ public class SnowBallShapedRecipe {
         }
     }
 
-    public ur getResult() {
+    public ItemStack getResult() {
         return result;
     }
 
-    public void setResult(ur result) {
+    public void setResult(ItemStack result) {
         this.result = result;
     }
 
-    public Map<Integer, ur> getIngredients() {
+    public Map<Integer, ItemStack> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(Map<Integer, ur> ingredients) {
+    public void setIngredients(Map<Integer, ItemStack> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public void setIngredientSpot(int spot, ur ingredient) {
+    public void setIngredientSpot(int spot, ItemStack ingredient) {
         if (spot >= 0 && spot < 9) {
             this.ingredients.put(spot, ingredient);
         }
     }
 
-    public ur getIngredientSpot(int spot) {
+    public ItemStack getIngredientSpot(int spot) {
         if (this.ingredients.containsKey(spot)) {
             return this.ingredients.get(spot);
         } else {
@@ -92,9 +96,9 @@ public class SnowBallShapedRecipe {
 
         int ingcount = 0;
 
-        for (ur ing : ingredients.values()) {
-            if (!ings.contains(ing.c)) {
-                ings.add(ing.c);
+        for (ItemStack ing : ingredients.values()) {
+            if (!ings.contains(Item.getIdFromItem(ing.getItem()))) {
+                ings.add(Item.getIdFromItem(ing.getItem()));
                 char c = 'A';
                 c += ingcount;
                 inglines.add(Character.valueOf(c));
@@ -106,7 +110,7 @@ public class SnowBallShapedRecipe {
             line = "";
             for (int i = 0; i < 3; i++) {
                 if (ingredients.containsKey(i + x)) {
-                    int itemID = ingredients.get(i + x).c;
+                    int itemID = Item.getIdFromItem(ingredients.get(i + x).getItem());
                     int pos = ings.indexOf(itemID);
                     char chara = 'A';
                     chara += pos;

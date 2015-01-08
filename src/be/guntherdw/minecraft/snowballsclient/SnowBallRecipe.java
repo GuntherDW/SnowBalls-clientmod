@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 GuntherDW
+ * Copyright (c) 2012-2015 GuntherDW
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,6 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+package be.guntherdw.minecraft.snowballsclient;
+
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
@@ -23,32 +27,32 @@ import java.util.List;
  */
 public class SnowBallRecipe {
 
-    private List<ur> ingredients;
-    private ur result;
+    private List<ItemStack> ingredients;
+    private ItemStack result;
 
-    public SnowBallRecipe(ur result, List<ur> ingredients) {
+    public SnowBallRecipe(ItemStack result, List<ItemStack> ingredients) {
         this.ingredients = ingredients;
         this.result = result;
     }
 
-    public List<ur> getIngredients() {
+    public List<ItemStack> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<ur> ingredients) {
+    public void setIngredients(List<ItemStack> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public ur getResult() {
+    public ItemStack getResult() {
         return result;
     }
 
-    public void setResult(ur result) {
+    public void setResult(ItemStack result) {
         this.result = result;
     }
 
-    public void addIngredient(ur ingredient) {
-        if (ingredient != null && ingredient.c > 0 && ingredient.c < 1024)
+    public void addIngredient(ItemStack ingredient) {
+        if (ingredient != null && Item.getIdFromItem(ingredient.getItem()) > 0 && Item.getIdFromItem(ingredient.getItem()) < 1024)
             this.ingredients.add(ingredient);
     }
 }

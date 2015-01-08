@@ -1,0 +1,8 @@
+{
+    "name": "Snowballs",
+    "mcversion": "${litemodversion}",
+    "version": "${version}",
+    "revision": "${build.number}",
+    "author": "${author}",
+    "description": "Snowballs clientside mod\nVersion 0.9 is designed to work with Minecraft 1.8.0\n\nAuthors:\n - GuntherDW\n - sk89q\n - lawhran"
+}

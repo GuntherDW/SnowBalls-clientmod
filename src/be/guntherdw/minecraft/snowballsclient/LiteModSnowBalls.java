@@ -18,6 +18,7 @@
 package be.guntherdw.minecraft.snowballsclient;
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
 import com.mojang.realmsclient.dto.RealmsServer;
 import com.mumfrey.liteloader.JoinGameListener;
 import com.mumfrey.liteloader.PluginChannelListener;
@@ -37,6 +38,10 @@ import net.minecraft.network.play.server.S01PacketJoinGame;
 import org.apache.logging.log4j.core.Logger;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -72,7 +77,48 @@ public class LiteModSnowBalls implements JoinGameListener, PluginChannelListener
 
     @Override
     public String getVersion() {
-        return "v0.9";
+        InputStream is = null;
+        try {
+            Gson gson = new Gson();
+            is = getLiteModJsonStream();
+            @SuppressWarnings("unchecked")
+            Map<String, String> meta = gson.fromJson(new InputStreamReader(is),
+                HashMap.class);
+            String version = meta.get("version");
+            String buildnumber = meta.get("revision");
+            if (version == null) {
+                version = "(missing version info)";
+            }
+            if (buildnumber != null) {
+                version += " (build: " + buildnumber + ")";
+            }
+            return version;
+        } catch (Exception ex) {
+            return "(error loading version)";
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Exception ex) {
+                }
+            }
+        }
+    }
+
+    public InputStream getLiteModJsonStream() {
+        String classURL = getClass().getResource("/" + getClass().getName().replace('.', '/') + ".class").toString();
+        if (classURL.contains("!")) {
+            String jarURL = classURL.substring(0, classURL.indexOf('!'));
+            try {
+                URL resourceURL = new URL(jarURL + "!/litemod.json");
+                return resourceURL.openStream();
+            } catch (IOException ex) {
+            }
+            return null;
+        } else {
+            // No JAR. Running under the IDE.
+            return getClass().getResourceAsStream("/litemod.json");
+        }
     }
 
     /**

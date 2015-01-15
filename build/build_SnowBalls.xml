@@ -149,9 +149,10 @@
 
 	<target name="litemod" description="Build the litemod file">
         <echo level="info" message="Building final output" />
+        <loadproperties srcFile="${eclipse}/SnowBalls-clientmod/build/buildnumber.txt"/>
 
 		<mkdir dir="${dist.dir}" />
-		<jar destfile="${dist.dir}/mod_${ant.project.name}_${version}_mc${mcversion}.${filetype}" duplicate="preserve" index="true" manifestencoding="UTF-8">
+		<jar destfile="${dist.dir}/mod_${ant.project.name}_${version}_b${build.number}_mc${mcversion}.${filetype}" duplicate="preserve" index="true" manifestencoding="UTF-8">
 			<manifest>
 				<attribute name="Built-By" value="MCP (http://mcp.ocean-labs.de)" />
 				<attribute name="Implementation-Vendor" value="${author}" />

@@ -18,10 +18,10 @@
 package be.guntherdw.minecraft.snowballsclient;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
 import com.mojang.realmsclient.dto.RealmsServer;
 import com.mumfrey.liteloader.JoinGameListener;
 import com.mumfrey.liteloader.PluginChannelListener;
+import com.mumfrey.liteloader.PostRenderListener;
 import com.mumfrey.liteloader.Tickable;
 import com.mumfrey.liteloader.core.LiteLoader;
 import com.mumfrey.liteloader.util.log.LiteLoaderLogger;
@@ -35,13 +35,10 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.C17PacketCustomPayload;
 import net.minecraft.network.play.server.S01PacketJoinGame;
+import net.minecraft.util.ChatComponentText;
 import org.apache.logging.log4j.core.Logger;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,7 +46,7 @@ import java.util.regex.Pattern;
 /**
  * @author GuntherDW
  */
-public class LiteModSnowBalls implements JoinGameListener, PluginChannelListener, Tickable {
+public class LiteModSnowBalls implements JoinGameListener, PluginChannelListener, Tickable, PostRenderListener {
 
     public List<SnowBallRecipe> ShapelessRecipes;
     public List<SnowBallShapedRecipe> ShapedRecipes;
@@ -60,6 +57,8 @@ public class LiteModSnowBalls implements JoinGameListener, PluginChannelListener
     private final String snowballsPluginMessageChannel = "SnowBalls";
     private boolean loadedrecipes = false;
     private boolean shownWarning = false;
+
+    private SearchRenderer searchRenderer;
 
     private final static int DELAYED_HELO_TICKS = 10;
     private int delayedHelo = 0;
@@ -77,48 +76,10 @@ public class LiteModSnowBalls implements JoinGameListener, PluginChannelListener
 
     @Override
     public String getVersion() {
-        InputStream is = null;
-        try {
-            Gson gson = new Gson();
-            is = getLiteModJsonStream();
-            @SuppressWarnings("unchecked")
-            Map<String, String> meta = gson.fromJson(new InputStreamReader(is),
-                HashMap.class);
-            String version = meta.get("version");
-            String buildnumber = meta.get("revision");
-            if (version == null) {
-                version = "(missing version info)";
-            }
-            if (buildnumber != null) {
-                version += " (build: " + buildnumber + ")";
-            }
-            return version;
-        } catch (Exception ex) {
-            return "(error loading version)";
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Exception ex) {
-                }
-            }
-        }
-    }
+        String version = LiteLoader.getInstance().getModMetaData(this, "version", "");
+        String build = LiteLoader.getInstance().getModMetaData(this, "revision", "");
 
-    public InputStream getLiteModJsonStream() {
-        String classURL = getClass().getResource("/" + getClass().getName().replace('.', '/') + ".class").toString();
-        if (classURL.contains("!")) {
-            String jarURL = classURL.substring(0, classURL.indexOf('!'));
-            try {
-                URL resourceURL = new URL(jarURL + "!/litemod.json");
-                return resourceURL.openStream();
-            } catch (IOException ex) {
-            }
-            return null;
-        } else {
-            // No JAR. Running under the IDE.
-            return getClass().getResourceAsStream("/litemod.json");
-        }
+        return version + (!(build.equals("")) ? " (build: "+build+")" : "");
     }
 
     /**
@@ -129,7 +90,7 @@ public class LiteModSnowBalls implements JoinGameListener, PluginChannelListener
      */
     @Override
     public void init(File configPath) {
-
+        searchRenderer = new SearchRenderer(this);
     }
 
     /**
@@ -147,7 +108,7 @@ public class LiteModSnowBalls implements JoinGameListener, PluginChannelListener
     private void log(String message) {
         log.info("[mod_SnowBalls] " + message);
         if (minecraft != null && minecraft.ingameGUI.getChatGUI() != null)
-            minecraft.ingameGUI.getChatGUI().addToSentMessages("[mod_SnowBalls] §6" + message);
+            minecraft.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("[mod_SnowBalls] §6" + message));
     }
 
     private void loadShapeLessRecipes() {
@@ -320,23 +281,34 @@ public class LiteModSnowBalls implements JoinGameListener, PluginChannelListener
      */
     @Override
     public void onCustomPayload(String channel, PacketBuffer data) {
-        log("Got custom payload packet!");
-        Set<String> recipeLines = new HashSet<String>();
-        String recipeLine = "";
-        byte[] bytes = data.array();
-        for (byte b1 : bytes) {
-            if (b1 == (byte) 0) {
-                recipeLines.add(recipeLine);
-                recipeLine = "";
-            } else {
-                recipeLine += (char) b1;
-            }
-        }
+        if(DEBUG) log("Got custom payload packet!");
 
-        for (String line : recipeLines) {
-            Matcher matcher = lineSplitterPattern.matcher(line);
-            if (matcher.find()) {
-                parseLine(matcher.group(1), matcher.group(2).split("\\|"), true);
+        byte[] bytes = data.array();
+        byte controlByte = bytes[0];
+        byte[] cleanData = new byte[bytes.length-1];
+        System.arraycopy(bytes, 1, cleanData, 0, bytes.length-1);
+
+        if(controlByte == 20) {
+            searchRenderer.decodePayload(cleanData);
+        } else if(controlByte == 10) {
+            Set<String> recipeLines = new HashSet<String>();
+            String recipeLine = "";
+
+            for (byte b1 : cleanData) {
+                if (b1 == (byte) 0) {
+                    recipeLines.add(recipeLine);
+                    recipeLine = "";
+                } else {
+                    recipeLine += (char) b1;
+                }
+
+            }
+
+            for (String line : recipeLines) {
+                Matcher matcher = lineSplitterPattern.matcher(line);
+                if (matcher.find()) {
+                    parseLine(matcher.group(1), matcher.group(2).split("\\|"), true);
+                }
             }
         }
     }
@@ -403,12 +375,32 @@ public class LiteModSnowBalls implements JoinGameListener, PluginChannelListener
 
         if (sendRegisterPacket) {
             if (delayedHelo == 0) {
-                log("Sending helo packet");
+                if(DEBUG) log("Sending helo packet");
                 minecraft.getNetHandler().addToSendQueue(getRegisterPacket());
                 sendRegisterPacket = false;
             } else {
                 delayedHelo--;
             }
         }
+    }
+
+    /**
+     * Called after entities are rendered but before particles
+     *
+     * @param partialTicks
+     */
+    @Override
+    public void onPostRenderEntities(float partialTicks) {
+        searchRenderer.onPostRenderEntities(partialTicks);
+    }
+
+    /**
+     * Called after all world rendering is completed
+     *
+     * @param partialTicks
+     */
+    @Override
+    public void onPostRender(float partialTicks) {
+
     }
 }

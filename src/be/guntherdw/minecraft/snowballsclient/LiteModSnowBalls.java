@@ -50,7 +50,6 @@ public class LiteModSnowBalls implements JoinGameListener, PluginChannelListener
 
     public List<SnowBallRecipe> ShapelessRecipes;
     public List<SnowBallShapedRecipe> ShapedRecipes;
-    // public static Pattern commandpattern = Pattern.compile("§7§3§3§7([^|]*)\\|?(.*)");
     private HashMap<Integer, Integer> originalStackSizes = new HashMap<Integer, Integer>();
     public static Pattern lineSplitterPattern = Pattern.compile("([^|]*)\\|?(.*)");
     private static Minecraft minecraft;
@@ -111,7 +110,7 @@ public class LiteModSnowBalls implements JoinGameListener, PluginChannelListener
             minecraft.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("[mod_SnowBalls] §6" + message));
     }
 
-    private void loadShapeLessRecipes() {
+    private void loadShapelessRecipes() {
         if (!loadedrecipes) {
             for (SnowBallRecipe sr : ShapelessRecipes) {
                 CraftingManager.getInstance().addShapelessRecipe(sr.getResult(), sr.getIngredients().toArray());

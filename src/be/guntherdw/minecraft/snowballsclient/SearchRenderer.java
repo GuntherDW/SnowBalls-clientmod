@@ -170,13 +170,11 @@ public class SearchRenderer {
             wr.addVertex(startingPointX,         startingPointY,          startingPointZ + girth);
             wr.addVertex(startingPointX + width, startingPointY,          startingPointZ + girth);
 
-
             wr.addVertex(startingPointX + width, startingPointY,          startingPointZ);
             wr.addVertex(startingPointX + width, startingPointY + height, startingPointZ);
 
             wr.addVertex(startingPointX + width, startingPointY + height, startingPointZ);
             wr.addVertex(startingPointX + width, startingPointY + height, startingPointZ + girth);
-
 
             wr.addVertex(startingPointX,         startingPointY + height, startingPointZ + girth);
             wr.addVertex(startingPointX + width, startingPointY + height, startingPointZ + girth);

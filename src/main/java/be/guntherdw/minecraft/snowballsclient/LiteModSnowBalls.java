@@ -33,9 +33,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.client.C17PacketCustomPayload;
-import net.minecraft.network.play.server.S01PacketJoinGame;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.network.play.client.CPacketCustomPayload;
+import net.minecraft.network.play.server.SPacketJoinGame;
+import net.minecraft.util.text.TextComponentString;
 import org.apache.logging.log4j.core.Logger;
 
 import java.io.File;
@@ -107,7 +107,7 @@ public class LiteModSnowBalls implements JoinGameListener, PluginChannelListener
     private void log(String message) {
         log.info("[mod_SnowBalls] " + message);
         if (minecraft != null && minecraft.ingameGUI.getChatGUI() != null)
-            minecraft.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("[mod_SnowBalls] §6" + message));
+            minecraft.ingameGUI.getChatGUI().printChatMessage(new TextComponentString("[mod_SnowBalls] §6" + message));
     }
 
     private void loadShapelessRecipes() {
@@ -312,10 +312,10 @@ public class LiteModSnowBalls implements JoinGameListener, PluginChannelListener
         }
     }
 
-    public C17PacketCustomPayload getRegisterPacket() {
+    public CPacketCustomPayload getRegisterPacket() {
         PacketBuffer pb = new PacketBuffer(Unpooled.buffer());
         pb.writeByte((byte) 26);
-        C17PacketCustomPayload registerPacket = new C17PacketCustomPayload(snowballsPluginMessageChannel, pb);
+        CPacketCustomPayload registerPacket = new CPacketCustomPayload(snowballsPluginMessageChannel, pb);
         return registerPacket;
     }
 
@@ -328,7 +328,7 @@ public class LiteModSnowBalls implements JoinGameListener, PluginChannelListener
      * @param realmsServer   If connecting to a realm, a reference to the RealmsServer object
      */
     @Override
-    public void onJoinGame(INetHandler netHandler, S01PacketJoinGame joinGamePacket, ServerData serverData, RealmsServer realmsServer) {
+    public void onJoinGame(INetHandler netHandler, SPacketJoinGame joinGamePacket, ServerData serverData, RealmsServer realmsServer) {
         sendRegisterPacket = true;
         delayedHelo = DELAYED_HELO_TICKS;
     }

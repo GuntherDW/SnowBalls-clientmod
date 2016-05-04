@@ -1,10 +1,9 @@
 package be.guntherdw.minecraft.snowballsclient;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.*;
-import net.minecraft.util.BlockPos;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashSet;
@@ -46,17 +45,17 @@ public class SearchRenderer {
     }
 
     private double getPlayerX(float partialTicks) {
-        EntityPlayerSP p = Minecraft.getMinecraft().thePlayer;
+        Entity p = Minecraft.getMinecraft().getRenderViewEntity();
         return p.prevPosX + (p.posX - p.prevPosX) * partialTicks;
     }
 
     private double getPlayerY(float partialTicks) {
-        EntityPlayerSP p = Minecraft.getMinecraft().thePlayer;
+        Entity p = Minecraft.getMinecraft().getRenderViewEntity();
         return p.prevPosY + (p.posY - p.prevPosY) * partialTicks;
     }
 
     private double getPlayerZ(float partialTicks) {
-        EntityPlayerSP p = Minecraft.getMinecraft().thePlayer;
+        Entity p = Minecraft.getMinecraft().getRenderViewEntity();
         return p.prevPosZ + (p.posZ - p.prevPosZ) * partialTicks;
     }
 
@@ -150,8 +149,9 @@ public class SearchRenderer {
             double girth = 1.0D;
 
             Tessellator tess = Tessellator.getInstance();
-            WorldRenderer wr = tess.getWorldRenderer();
+            VertexBuffer wr = tess.getBuffer();
 
+            /*
             wr.startDrawing(GL11.GL_LINES);
             wr.setColorRGBA(red, green, blue, alpha);
             GL11.glLineWidth(lineWidth);
@@ -194,7 +194,7 @@ public class SearchRenderer {
 
             wr.addVertex(startingPointX,         startingPointY + height, startingPointZ);
             wr.addVertex(startingPointX,         startingPointY + height, startingPointZ + girth);
-            tess.draw();
+            tess.draw(); */
         }
     }
 

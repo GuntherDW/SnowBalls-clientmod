@@ -153,12 +153,8 @@ public class SearchRenderer {
             Tessellator tess = Tessellator.getInstance();
             VertexBuffer wr = tess.getBuffer();
 
-            // wr.startDrawing(GL11.GL_LINES);
             wr.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-            // wr.setColorRGBA(red, green, blue, alpha);
-            // GlStateManager.color(red, green, blue, alpha);
             GlStateManager.glLineWidth(lineWidth);
-            // GL11.glLineWidth(lineWidth);
 
             wr.pos(startingPointX,         startingPointY,          startingPointZ).color(red, green, blue, alpha).endVertex();
             wr.pos(startingPointX + width, startingPointY,          startingPointZ).color(red, green, blue, alpha).endVertex();

@@ -24,7 +24,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.liteloader'
 apply plugin: 'org.spongepowered.mixin'
 
-version = "0.9"
+version = "1.0"
 group = "be.guntherdw.minecraft.snowballsclient" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "snowballsclient"
 
@@ -41,14 +41,19 @@ sourceSets {
     }
 }
 
+
 mixin {
     defaultObfuscationEnv notch
 }
 
 litemod {
     json {
-        name = "snowballsclient"
+        name = "Snowballs"
         mcversion = "1.9.0"
+        version = "1.0"
+        author = "Tweakcraft.net"
+        description = "Snowballs clientside mod\nVersion 1.0 is designed to work with Minecraft 1.9.0\n\nAuthors:\n - GuntherDW\n - sk89q\n - lawhran"
+
         // mixinConfigs += "mixins.example.json"
     }
 }

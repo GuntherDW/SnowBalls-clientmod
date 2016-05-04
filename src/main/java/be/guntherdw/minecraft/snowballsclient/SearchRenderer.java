@@ -2,6 +2,8 @@ package be.guntherdw.minecraft.snowballsclient;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
@@ -151,50 +153,52 @@ public class SearchRenderer {
             Tessellator tess = Tessellator.getInstance();
             VertexBuffer wr = tess.getBuffer();
 
-            /*
-            wr.startDrawing(GL11.GL_LINES);
-            wr.setColorRGBA(red, green, blue, alpha);
-            GL11.glLineWidth(lineWidth);
+            // wr.startDrawing(GL11.GL_LINES);
+            wr.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+            // wr.setColorRGBA(red, green, blue, alpha);
+            // GlStateManager.color(red, green, blue, alpha);
+            GlStateManager.glLineWidth(lineWidth);
+            // GL11.glLineWidth(lineWidth);
 
-            wr.addVertex(startingPointX,         startingPointY,          startingPointZ);
-            wr.addVertex(startingPointX + width, startingPointY,          startingPointZ);
+            wr.pos(startingPointX,         startingPointY,          startingPointZ).color(red, green, blue, alpha).endVertex();
+            wr.pos(startingPointX + width, startingPointY,          startingPointZ).color(red, green, blue, alpha).endVertex();
 
-            wr.addVertex(startingPointX,         startingPointY,          startingPointZ);
-            wr.addVertex(startingPointX,         startingPointY,          startingPointZ + girth);
+            wr.pos(startingPointX,         startingPointY,          startingPointZ).color(red, green, blue, alpha).endVertex();
+            wr.pos(startingPointX,         startingPointY,          startingPointZ + girth).color(red, green, blue, alpha).endVertex();
 
-            wr.addVertex(startingPointX,         startingPointY,          startingPointZ + girth);
-            wr.addVertex(startingPointX + width, startingPointY,          startingPointZ + girth);
+            wr.pos(startingPointX,         startingPointY,          startingPointZ + girth).color(red, green, blue, alpha).endVertex();
+            wr.pos(startingPointX + width, startingPointY,          startingPointZ + girth).color(red, green, blue, alpha).endVertex();
 
-            wr.addVertex(startingPointX + width, startingPointY,          startingPointZ);
-            wr.addVertex(startingPointX + width, startingPointY + height, startingPointZ);
+            wr.pos(startingPointX + width, startingPointY,          startingPointZ).color(red, green, blue, alpha).endVertex();
+            wr.pos(startingPointX + width, startingPointY + height, startingPointZ).color(red, green, blue, alpha).endVertex();
 
-            wr.addVertex(startingPointX + width, startingPointY + height, startingPointZ);
-            wr.addVertex(startingPointX + width, startingPointY + height, startingPointZ + girth);
+            wr.pos(startingPointX + width, startingPointY + height, startingPointZ).color(red, green, blue, alpha).endVertex();
+            wr.pos(startingPointX + width, startingPointY + height, startingPointZ + girth).color(red, green, blue, alpha).endVertex();
 
-            wr.addVertex(startingPointX,         startingPointY + height, startingPointZ + girth);
-            wr.addVertex(startingPointX + width, startingPointY + height, startingPointZ + girth);
+            wr.pos(startingPointX,         startingPointY + height, startingPointZ + girth).color(red, green, blue, alpha).endVertex();
+            wr.pos(startingPointX + width, startingPointY + height, startingPointZ + girth).color(red, green, blue, alpha).endVertex();
 
-            wr.addVertex(startingPointX,         startingPointY + height, startingPointZ + girth);
-            wr.addVertex(startingPointX,         startingPointY,          startingPointZ + girth);
+            wr.pos(startingPointX,         startingPointY + height, startingPointZ + girth).color(red, green, blue, alpha).endVertex();
+            wr.pos(startingPointX,         startingPointY,          startingPointZ + girth).color(red, green, blue, alpha).endVertex();
 
-            wr.addVertex(startingPointX,         startingPointY,          startingPointZ);
-            wr.addVertex(startingPointX,         startingPointY + height, startingPointZ);
-
-
-            wr.addVertex(startingPointX + width, startingPointY,          startingPointZ);
-            wr.addVertex(startingPointX + width, startingPointY,          startingPointZ + girth);
+            wr.pos(startingPointX,         startingPointY,          startingPointZ).color(red, green, blue, alpha).endVertex();
+            wr.pos(startingPointX,         startingPointY + height, startingPointZ).color(red, green, blue, alpha).endVertex();
 
 
-            wr.addVertex(startingPointX + width, startingPointY,          startingPointZ + girth);
-            wr.addVertex(startingPointX + width, startingPointY + height, startingPointZ + girth);
+            wr.pos(startingPointX + width, startingPointY,          startingPointZ).color(red, green, blue, alpha).endVertex();
+            wr.pos(startingPointX + width, startingPointY,          startingPointZ + girth).color(red, green, blue, alpha).endVertex();
 
 
-            wr.addVertex(startingPointX,         startingPointY + height, startingPointZ);
-            wr.addVertex(startingPointX + width, startingPointY + height, startingPointZ);
+            wr.pos(startingPointX + width, startingPointY,          startingPointZ + girth).color(red, green, blue, alpha).endVertex();
+            wr.pos(startingPointX + width, startingPointY + height, startingPointZ + girth).color(red, green, blue, alpha).endVertex();
 
-            wr.addVertex(startingPointX,         startingPointY + height, startingPointZ);
-            wr.addVertex(startingPointX,         startingPointY + height, startingPointZ + girth);
-            tess.draw(); */
+
+            wr.pos(startingPointX,         startingPointY + height, startingPointZ).color(red, green, blue, alpha).endVertex();
+            wr.pos(startingPointX + width, startingPointY + height, startingPointZ).color(red, green, blue, alpha).endVertex();
+
+            wr.pos(startingPointX,         startingPointY + height, startingPointZ).color(red, green, blue, alpha).endVertex();
+            wr.pos(startingPointX,         startingPointY + height, startingPointZ + girth).color(red, green, blue, alpha).endVertex();
+            tess.draw();
         }
     }
 

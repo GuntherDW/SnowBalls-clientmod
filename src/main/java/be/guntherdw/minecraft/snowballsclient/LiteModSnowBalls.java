@@ -375,7 +375,7 @@ public class LiteModSnowBalls implements JoinGameListener, PluginChannelListener
         if (sendRegisterPacket) {
             if (delayedHelo == 0) {
                 if(DEBUG) log("Sending helo packet");
-                minecraft.getNetHandler().addToSendQueue(getRegisterPacket());
+                minecraft.getConnection().sendPacket(getRegisterPacket());
                 sendRegisterPacket = false;
             } else {
                 delayedHelo--;

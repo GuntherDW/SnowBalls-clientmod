@@ -16,7 +16,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
         classpath 'org.spongepowered:mixingradle:0.4-SNAPSHOT'
     }
 }
@@ -24,13 +24,13 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.liteloader'
 apply plugin: 'org.spongepowered.mixin'
 
-version = "1.0"
+version = "1.0.1"
 group = "be.guntherdw.minecraft.snowballsclient" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "snowballsclient"
 
 minecraft {
-    version = "1.9"
-    mappings = "snapshot_20160410"
+    version = "1.9.4"
+    mappings = "snapshot_20160518"
     runDir = "run"
 }
 
@@ -49,10 +49,10 @@ mixin {
 litemod {
     json {
         name = "Snowballs"
-        mcversion = "1.9.0"
-        version = "1.0"
+        mcversion = "1.9.4"
+        version = "1.0.1"
         author = "Tweakcraft.net"
-        description = "Snowballs clientside mod\nVersion 1.0 is designed to work with Minecraft 1.9.0\n\nAuthors:\n - GuntherDW\n - sk89q\n - lawhran"
+        description = "Snowballs clientside mod\nVersion 1.0.1 is designed to work with Minecraft 1.9.4\n\nAuthors:\n - GuntherDW\n - sk89q\n - lawhran"
 
         // mixinConfigs += "mixins.example.json"
     }
